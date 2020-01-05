@@ -3,23 +3,29 @@
 
 ## 1.自动解析C头文件内的函数声明
 ```C
-int8_t* test1(userType* n1, UINT *n2, char* str);
+double* testFunc(float* n1, int* n2, const char* str);
 ```
 
 ## 2.输出生成供Lua调用的绑定函数
 ```C
-static int Lua_test1(lua_State* L)
+static int Lua_testFunc(lua_State* L)
 {
     /* get params from lua */
-    userType n1 = luaL_checkinteger(L, 1);
-    UINT n2 = luaL_checkinteger(L, 2);
-    char* str = luaL_checkstring(L, 3);
+    float n1 = luaL_checknumber(L, 1);
+    int n2 = luaL_checkinteger(L, 2);
+    const char* str = luaL_checkstring(L, 3);
 
     /* call c function */
-    int8_t test1_retval = *test1(&n1, &n2, str);
+    double testFunc_retval = *testFunc(&n1, &n2, str);
 
     /* push c function return value to lua */
-    lua_pushinteger(L, test1_retval);
+    lua_pushnumber(L, testFunc_retval);
     return 1;
 }
+```
+
+## 3.Lua中调用
+```lua
+value = test1(3.14, 2, "hello C2Lua")
+print(value)
 ```
