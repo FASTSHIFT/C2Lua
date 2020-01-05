@@ -3,7 +3,7 @@
 
 ## 1.解析C函数声明
 ```C
-double* testFunc(float* n1, int* n2, const char* str);
+double* testFunc(float* n1, int n2, const char* str);
 ```
 
 ## 2.生成供Lua调用的绑定函数
@@ -16,7 +16,7 @@ static int Lua_testFunc(lua_State* L)
     const char* str = luaL_checkstring(L, 3);
 
     /* call c function */
-    double testFunc_retval = *testFunc(&n1, &n2, str);
+    double testFunc_retval = *testFunc(&n1, n2, str);
 
     /* push c function return value to lua */
     lua_pushnumber(L, testFunc_retval);
