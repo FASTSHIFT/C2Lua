@@ -1,12 +1,12 @@
 # C2Lua
-> C binding to Lua
+> Lua绑定函数批量生成工具，支持指针，自定义数据类型
 
 ## 1.自动解析C头文件内的函数声明
 ```C
 int8_t* test1(userType* n1, UINT *n2, char* str);
 ```
 
-## 2.生成供Lua调用的绑定函数
+## 2.输出生成供Lua调用的绑定函数
 ```C
 static int Lua_test1(lua_State* L)
 {
