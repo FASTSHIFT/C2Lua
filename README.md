@@ -4,7 +4,7 @@
 ## 1.自动解析C头文件内的函数声明
 ```C
 int8_t* test1(userType* n1, UINT *n2, char* str);
-···
+```
 
 ## 2.生成供Lua调用的绑定函数
 ```C
@@ -22,4 +22,4 @@ static int Lua_test1(lua_State* L)
     lua_pushinteger(L, test1_retval);
     return 1;
 }
-···
+```
