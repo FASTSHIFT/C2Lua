@@ -1,12 +1,12 @@
 # C2Lua
-> Lua绑定函数批量生成工具，支持指针，自定义数据类型
+> Lua绑定函数批量生成工具，支持指针、自定义数据类型。
 
-## 1.自动解析C头文件内的函数声明
+## 1.解析C函数声明
 ```C
 double* testFunc(float* n1, int* n2, const char* str);
 ```
 
-## 2.输出生成供Lua调用的绑定函数
+## 2.生成供Lua调用的绑定函数
 ```C
 static int Lua_testFunc(lua_State* L)
 {
