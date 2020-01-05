@@ -26,6 +26,6 @@ static int Lua_testFunc(lua_State* L)
 
 ## 3.Lua中调用
 ```lua
-value = test1(3.14, 2, "hello C2Lua")
+value = testFunc(3.14, 2, "hello C2Lua")
 print(value)
 ```
