@@ -3,30 +3,29 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "WString.h"
-#include "WCharacter.h"
+#include <stdlib.h>
+#include "WString\WString.h"
+#include "WString\WCharacter.h"
 
 #define __Sizeof(arr) (sizeof(arr)/sizeof(arr[0]))
-#define MIN(a,b) ((a)<(b)?(a):(b))
 #define MAX(a,b) ((a)>(b)?(a):(b))
-
-typedef struct {
-	String ctype;
-	String luafunc;
-}Ctype2LuaFunc_TypeDef;
+#define PRINT_FUNC_NAME() printf("\r\n--------"__FUNCTION__"--------\r\n")
 
 typedef struct {
 	String type;
 	String name;
-}CParamList_TypeDef;
+}CParam_TypeDef;
 
-extern CParamList_TypeDef CParamList[100];
-extern String FunctionType, FunctionName;
+extern CParam_TypeDef CParamList[100];
+extern CParam_TypeDef CurrentFunction;
 
 void CheckOriFunctionInfo(const char* str);
 int CheckParamInfo(String functionParam);
 String CheckFunctionInfo(String codeStr);
 
-void CreatLuaAPI(String funcType, String funcName, int paramNum, CParamList_TypeDef* paramList);
+void CreatLuaAPI(CParam_TypeDef func, int paramNum, CParam_TypeDef* paramList, FILE* fp);
+void toLua(const char* code, FILE* fp);
+
+bool LoadHeadFile(String inputPath, String outputPath);
 
 #endif

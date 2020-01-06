@@ -1,11 +1,11 @@
 #include "C2Lua.h"
 
-String FunctionType, FunctionName;
-CParamList_TypeDef CParamList[100];
+CParam_TypeDef CurrentFunction;
+CParam_TypeDef CParamList[100];
 
 void CheckOriFunctionInfo(const char* str)
 {
-	printf("\r\n--------"__FUNCTION__"---------\r\n");
+	PRINT_FUNC_NAME();
 	printf("%s\r\n<size:%d>\r\n", str, strlen(str));
 }
 
@@ -24,11 +24,11 @@ static void TypeParamSeparation(String param, String* type, String* name)
 
 	String ParamType = param.substring(0, index + 1);
 	ParamType.trim();
-	ParamType.replace(" ","");
+	/*ParamType.replace(" ","");
 	if(ParamType.startsWith("const"))
 	{
 		ParamType.replace("const", "const ");
-	}
+	}*/
 	printf("Type:<%s>\r\n", ParamType.c_str());
 
 	*type = ParamType;
@@ -48,7 +48,7 @@ static void AddNextParamToList(String param, int paramNum)
 
 int CheckParamInfo(String functionParam)
 {
-	printf("\r\n--------"__FUNCTION__"---------\r\n");
+	PRINT_FUNC_NAME();
 	int ParamNum = 1;
 
 	while (true)
@@ -75,7 +75,7 @@ int CheckParamInfo(String functionParam)
 
 String CheckFunctionInfo(String codeStr)
 {
-	printf("\r\n--------"__FUNCTION__"---------\r\n");
+	PRINT_FUNC_NAME();
 	codeStr.replace("\r","");
 	codeStr.replace("\n","");
 	codeStr.replace("\t","");
@@ -84,7 +84,7 @@ String CheckFunctionInfo(String codeStr)
 	/*函数*/
 	int index = codeStr.indexOf('(');
 	String Function = codeStr.substring(0, index);
-	TypeParamSeparation(Function, &FunctionType, &FunctionName);
+	TypeParamSeparation(Function, &CurrentFunction.type, &CurrentFunction.name);
 
 	/*函数参数*/
 	codeStr = codeStr.substring(index);

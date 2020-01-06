@@ -1,25 +1,26 @@
 #include "C2Lua.h"
 
+typedef struct {
+	String ctype;
+	String luafunc;
+}Ctype2LuaFunc_TypeDef;
+
 Ctype2LuaFunc_TypeDef TypeInfo_Grp[] = {
-	{"char*",    "string"  },
-	{"unsigned", "integer" },//unsigned; uint; 
-	{"uint",     "integer" },//uintx_t;
-	{"int",      "integer" },//int; intx_t
-	{"short",    "integer" },//short
-	{"long",     "integer" },//long
-	{"char",     "integer" },//char
+	{"char*",    "string"  },//string
+	{"String",   "string"  },//Arduino String
 	{"float",    "number"  },//float
 	{"double",   "number"  }//double
-	
 };
 
-#define API_Start     "static int Lua_%s(lua_State* L)"
-#define API_TAB       "    "
-#define API_LINEFEED  "\r\n"
-#define API_ANNOTATION(str)\
+#define API_PRINTF(format, ...)\
 do{\
-	printf(API_LINEFEED API_TAB"/* "str" */\r\n");\
+	if(fp)fprintf(fp, format, ##__VA_ARGS__);\
+	printf(format, ##__VA_ARGS__);\
 }while(0)
+
+#define API_TAB       "    "
+#define API_LINEFEED  "\n"
+#define API_ANNOTATION(format, ...) API_PRINTF(API_LINEFEED API_TAB"/* "format" */" API_LINEFEED, ##__VA_ARGS__);
 
 String CheckLuaType(String CType)
 {
@@ -28,7 +29,7 @@ String CheckLuaType(String CType)
 	{
 		if(CType.indexOf(TypeInfo_Grp[i].ctype) >= 0)
 		{
-			type =  TypeInfo_Grp[i].luafunc;
+			type = TypeInfo_Grp[i].luafunc;
 			break;
 		}
 	}
@@ -46,31 +47,34 @@ static String PointerProcess(String type)
 	return type;
 }
 
-void CreatLuaAPI(String funcType, String funcName, int paramNum, CParamList_TypeDef* paramList)
+void CreatLuaAPI(CParam_TypeDef func, int paramNum, CParam_TypeDef* paramList, FILE* fp)
 {
-	printf("\r\n--------"__FUNCTION__"---------\r\n");
-	printf(API_Start,funcName.c_str());
-	printf("\r\n{");
+	PRINT_FUNC_NAME();
 
-	/*printf("paramNum = %d\r\n", paramNum);
-	for(int i = 0; i < paramNum; i++)
-	{
-		printf("paramList[%d]:%s-%s\r\n", i, paramList[i].type.c_str(), paramList[i].name.c_str());
-	}*/
+	/*函数名+形参*/
+	/*static int Lua_xxx(lua_State* L)*/
+	API_PRINTF(API_LINEFEED"static int Lua_%s(lua_State* L)", func.name.c_str());
+
+	/*{*/
+	API_PRINTF(API_LINEFEED"{");
 
 	/*检查形参*/
 	if(paramNum > 0)
 	{
 		/*从lua获取形参*/
-		API_ANNOTATION("get params from lua");
+		/*注释*/
+		API_ANNOTATION("get %d param(s) from lua", paramNum);
 		for(int i = 0; i < paramNum; i++)
 		{
+			/*匹配合适的Lua数据类型*/
 			String luaType = CheckLuaType(paramList[i].type);
 
+			/*匹配合适的参数接收数据类型 */
 			String paramType = PointerProcess(paramList[i].type);
 
-			printf(API_TAB);
-			printf("%s %s = luaL_check%s(L, %d);\r\n",
+			/*x_t x = luaL_checkxxx(L, x);*/
+			API_PRINTF(API_TAB);
+			API_PRINTF("%s %s = luaL_check%s(L, %d);"API_LINEFEED,
 				paramType.c_str(),
 				paramList[i].name.c_str(),
 				luaType.c_str(),
@@ -79,47 +83,81 @@ void CreatLuaAPI(String funcType, String funcName, int paramNum, CParamList_Type
 		}
 	}
 
+	/*注释*/
 	API_ANNOTATION("call c function");
 
-	printf(API_TAB);
+	API_PRINTF(API_TAB);
 	int retnum = 0;
-	if(funcType != "void")
+	/*接收函数的返回值*/
+	/*函数是否返回参数*/
+	if(func.type != "void")
 	{
-		String type = PointerProcess(funcType);
-		printf("%s %s_retval = ",type.c_str(), funcName.c_str());
+		/*匹配合适的参数接收数据类型 */
+		String type = PointerProcess(func.type);
+
+		/*x_t x_retval = */
+		API_PRINTF("%s %s_retval = ",type.c_str(), func.name.c_str());
 		retnum = 1;
 	}
 
-	if(IS_NUM_POINT(funcType))
+	/*判断函数的返回值是否为指针类型，是的话加*号取实体*/
+	if(IS_NUM_POINT(func.type))
 	{
-		printf("*");
+		API_PRINTF("*");
 	}
-	printf("%s(",funcName.c_str());
+	/*xfunc(*/
+	API_PRINTF("%s(",func.name.c_str());
+	/*函数是否有形参*/
 	if(paramNum > 0)
 	{
 		for(int i = 0; i < paramNum; i++)
 		{
+			/*是否需要取地址*/
 			if(IS_NUM_POINT(paramList[i].type))
 			{
-				printf("&");
+				API_PRINTF("&");
 			}
 
-			printf("%s",paramList[i].name.c_str());
+			/*(&)x*/
+			API_PRINTF("%s",paramList[i].name.c_str());
+
+			/*如果不是最后一个形参就添加 , */
 			if(i < paramNum - 1)
-				printf(", ");
+				API_PRINTF(", ");
 		}
 	}
-	printf(");\r\n");
+	/*);*/
+	API_PRINTF(");"API_LINEFEED);
 
+	/*如果需要返回参数*/
 	if(retnum > 0)
 	{
+		/*注释*/
 		API_ANNOTATION("push c function return value to lua");
 
-		printf(API_TAB);
-		printf("lua_push%s(L, %s_retval);\r\n",CheckLuaType(funcType).c_str(),funcName.c_str());
+		/*lua_pushxxx(L, x_retval);*/
+		API_PRINTF(API_TAB);
+		API_PRINTF("lua_push%s(L, %s_retval);"API_LINEFEED,CheckLuaType(func.type).c_str(),func.name.c_str());
 	}
 
-	printf(API_TAB);
-	printf("return %d;", retnum);
-	printf("\r\n}\r\n");
+	/*return 0(1); */
+	API_PRINTF(API_TAB);
+	API_PRINTF("return %d;", retnum);
+
+	/*}*/
+	API_PRINTF(API_LINEFEED"}"API_LINEFEED);
+}
+
+void toLua(const char* code, FILE* fp)
+{
+	CheckOriFunctionInfo(code);
+	String funcParam = CheckFunctionInfo(code);
+
+	int paramNum = 0;
+	if(funcParam != "void")
+	{
+		paramNum = CheckParamInfo(funcParam);
+	}
+
+	CreatLuaAPI(CurrentFunction, paramNum, CParamList, fp);
 }
