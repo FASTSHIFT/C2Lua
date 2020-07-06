@@ -9,7 +9,7 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="资源文件">
+    <Filter Include="WString">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
@@ -18,25 +18,37 @@
     <ClCompile Include="C2Lua.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="dtostrf.c">
+    <ClCompile Include="CFunctionAnalyze.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WString.cpp">
+    <ClCompile Include="CHeadFileProcess.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CLuaAPICreater.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CLuaAPIOutput.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WString\dtostrf.c">
+      <Filter>WString</Filter>
+    </ClCompile>
+    <ClCompile Include="WString\WString.cpp">
+      <Filter>WString</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C2Lua.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="dtostrf.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="WString\dtostrf.h">
+      <Filter>WString</Filter>
     </ClInclude>
-    <ClInclude Include="WString.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="WString\WCharacter.h">
+      <Filter>WString</Filter>
     </ClInclude>
-    <ClInclude Include="WCharacter.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="WString\WString.h">
+      <Filter>WString</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -12,14 +12,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C2Lua.cpp" />
-    <ClCompile Include="dtostrf.c" />
-    <ClCompile Include="WString.cpp" />
+    <ClCompile Include="CFunctionAnalyze.cpp" />
+    <ClCompile Include="CHeadFileProcess.cpp" />
+    <ClCompile Include="CLuaAPICreater.cpp" />
+    <ClCompile Include="CLuaAPIOutput.cpp" />
+    <ClCompile Include="WString\dtostrf.c" />
+    <ClCompile Include="WString\WString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C2Lua.h" />
-    <ClInclude Include="dtostrf.h" />
-    <ClInclude Include="WCharacter.h" />
-    <ClInclude Include="WString.h" />
+    <ClInclude Include="WString\dtostrf.h" />
+    <ClInclude Include="WString\WCharacter.h" />
+    <ClInclude Include="WString\WString.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4314150D-83BA-4D48-A50F-F748A6E6FEC4}</ProjectGuid>
